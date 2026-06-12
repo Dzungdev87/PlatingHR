@@ -68,10 +68,11 @@ export async function GET(request) {
       const row = [idx + 1, emp.empId, emp.fullName];
 
       days.forEach((d, i) => {
-        const val = (emp.days[i] || '').toString().trim();
+        const originalVal = (emp.days[i] || '').toString().trim();
+        const val = originalVal.length > 5 ? originalVal.substring(0, 5) : originalVal;
         row.push(val);
-        if (val && !LEAVE_CODES.includes(val)) workDays++;
-        if (LEAVE_CODES.includes(val)) leaveDays++;
+        if (originalVal && !LEAVE_CODES.includes(originalVal)) workDays++;
+        if (LEAVE_CODES.includes(originalVal)) leaveDays++;
       });
 
       row.push(workDays, leaveDays);

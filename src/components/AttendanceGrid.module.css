@@ -425,6 +425,57 @@ tr:hover .stickyColName {
   color: #b0bec5;
 }
 
+/* Custom Shift Input Styling */
+.customShiftInputRow {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.customInput {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.customInput:focus {
+  border-color: #2196f3;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.2);
+}
+
+.saveCustomBtn {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.saveCustomBtn:hover:not(:disabled) {
+  background: #1976d2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.saveCustomBtn:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: #607d8b;
+  cursor: not-allowed;
+}
+
 /* Footer */
 .editorFooter {
   display: flex;

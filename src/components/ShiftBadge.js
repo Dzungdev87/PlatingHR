@@ -8,7 +8,23 @@ export default function ShiftBadge({ value, size = 'normal' }) {
   const leaveInfo = LEAVE_TYPES[value];
   const info = shiftInfo || leaveInfo;
 
-  if (!info) return <span className={styles.badge}>{value}</span>;
+  if (!info) {
+    // Truncate custom shift text to a maximum of 5 characters
+    const displayValue = value.length > 5 ? value.substring(0, 5) : value;
+    return (
+      <span
+        className={`${styles.badge} ${size === 'small' ? styles.small : ''}`}
+        style={{
+          backgroundColor: '#3f51b5',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+        }}
+        title={value}
+      >
+        {displayValue}
+      </span>
+    );
+  }
 
   const color = info.color;
 

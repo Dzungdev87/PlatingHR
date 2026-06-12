@@ -165,6 +165,29 @@ export default function DashboardPage() {
                     </div>
                   );
                 })}
+                {(() => {
+                  const standardShifts = ['C1', 'C2', 'C3', 'TS', 'X', 'V'];
+                  const leaveTypes = ['AL', 'UP', 'SL', 'WL', 'OL'];
+                  const customCount = attendanceData.filter(e => {
+                    const val = e.days?.[todayStr - 1];
+                    return val && !standardShifts.includes(val) && !leaveTypes.includes(val);
+                  }).length;
+                  
+                  if (customCount === 0) return null;
+                  
+                  return (
+                    <div className={styles.shiftRow}>
+                      <span className={styles.shiftBadge} style={{ background: '#3f51b5' }}>Khác</span>
+                      <div className={styles.shiftBar}>
+                        <div
+                          className={styles.shiftFill}
+                          style={{ width: `${stats.totalEmployees > 0 ? (customCount / stats.totalEmployees) * 100 : 0}%`, background: '#3f51b5' }}
+                        />
+                      </div>
+                      <span className={styles.shiftCount}>{customCount} người</span>
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className={styles.leaveSummary}>

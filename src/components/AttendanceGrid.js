@@ -34,6 +34,7 @@ export default function AttendanceGrid({
 }) {
   const [localData, setLocalData] = useState(attendanceData);
   const [selectedCell, setSelectedCell] = useState(null);
+  const [customShiftText, setCustomShiftText] = useState('');
 
   const daysInMonth = new Date(year, month, 0).getDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
@@ -65,7 +66,12 @@ export default function AttendanceGrid({
   };
 
   const handleCellClick = (empId, day) => {
-    if (canEditCell(empId, day)) setSelectedCell({ empId, day });
+    if (canEditCell(empId, day)) {
+      setSelectedCell({ empId, day });
+      const currentVal = getCellValue(empId, day);
+      const isStandard = [...SHIFT_OPTIONS.map(s => s.code), ...LEAVE_CODES].includes(currentVal);
+      setCustomShiftText(isStandard ? '' : currentVal);
+    }
   };
 
   const handleCellChange = (value) => {
@@ -220,6 +226,37 @@ export default function AttendanceGrid({
                       <span className={styles.leaveLabel}>{label}</span>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Ca đặc biệt */}
+              <div className={styles.editorGroup}>
+                <div className={styles.groupLabel}>⭐ Ca đặc biệt (Nhập tự do)</div>
+                <div className={styles.customShiftInputRow}>
+                  <input
+                    type="text"
+                    placeholder="VD: Ca1-1, Ca2-2..."
+                    maxLength={20}
+                    value={customShiftText}
+                    onChange={(e) => setCustomShiftText(e.target.value)}
+                    className={styles.customInput}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && customShiftText.trim()) {
+                        handleCellChange(customShiftText.trim());
+                      }
+                    }}
+                  />
+                  <button
+                    className={styles.saveCustomBtn}
+                    onClick={() => {
+                      if (customShiftText.trim()) {
+                        handleCellChange(customShiftText.trim());
+                      }
+                    }}
+                    disabled={!customShiftText.trim()}
+                  >
+                    Áp dụng
+                  </button>
                 </div>
               </div>
             </div>
