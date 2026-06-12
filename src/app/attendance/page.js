@@ -15,6 +15,7 @@ export default function AttendancePage() {
   const [attendanceData, setAttendanceData] = useState({});
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth() + 1);
@@ -64,27 +65,51 @@ export default function AttendancePage() {
     init();
   }, [fetchUser, fetchData, month, year]);
 
-  const handleAttendanceUpdate = async (empId, day, value) => {
+  const handleAttendanceUpdate = (empId, day, value) => {
+    const key = `${empId}-${day}`;
+    setAttendanceData(prev => ({ ...prev, [key]: value }));
+    setHasChanges(true);
+  };
+
+  const handleSaveAttendance = async () => {
     setSaving(true);
     try {
       const res = await fetch('/api/attendance', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ empId, day, month, year, value }),
+        body: JSON.stringify({ month, year, attendanceData }),
       });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || 'Lỗi khi cập nhật chấm công');
+        alert(err.error || 'Lỗi khi lưu bảng chấm công');
         await fetchData(month, year);
       } else {
-        const key = `${empId}-${day}`;
-        setAttendanceData(prev => ({ ...prev, [key]: value }));
+        setHasChanges(false);
+        alert('Lưu dữ liệu chấm công thành công!');
       }
     } catch {
       alert('Lỗi kết nối máy chủ');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleMonthChange = (newMonth) => {
+    if (hasChanges) {
+      const confirmLeave = window.confirm('Bạn có thay đổi chưa lưu. Bạn có muốn đổi tháng mà không lưu không?');
+      if (!confirmLeave) return;
+    }
+    setMonth(newMonth);
+    setHasChanges(false);
+  };
+
+  const handleYearChange = (newYear) => {
+    if (hasChanges) {
+      const confirmLeave = window.confirm('Bạn có thay đổi chưa lưu. Bạn có muốn đổi năm mà không lưu không?');
+      if (!confirmLeave) return;
+    }
+    setYear(newYear);
+    setHasChanges(false);
   };
 
   const handleExportExcel = async () => {
@@ -155,7 +180,7 @@ export default function AttendancePage() {
                     <span>Tháng:</span>
                     <select
                       value={month}
-                      onChange={(e) => setMonth(Number(e.target.value))}
+                      onChange={(e) => handleMonthChange(Number(e.target.value))}
                       className={styles.select}
                     >
                       {monthNames.map((name, i) => (
@@ -168,7 +193,7 @@ export default function AttendancePage() {
                     <span>Năm:</span>
                     <select
                       value={year}
-                      onChange={(e) => setYear(Number(e.target.value))}
+                      onChange={(e) => handleYearChange(Number(e.target.value))}
                       className={styles.select}
                     >
                       {[2024, 2025, 2026, 2027].map((y) => (
@@ -177,6 +202,20 @@ export default function AttendancePage() {
                     </select>
                   </label>
                 </div>
+
+                {/* Save button */}
+                <button
+                  id="save-attendance-btn"
+                  className={[styles.saveBtn, hasChanges ? styles.hasChanges : ''].join(' ')}
+                  onClick={handleSaveAttendance}
+                  disabled={saving || employees.length === 0}
+                  title="Lưu toàn bộ thay đổi chấm công hiện tại vào Google Sheets"
+                >
+                  <span className={styles.saveIcon}>{saving ? '⏳' : '💾'}</span>
+                  <span className={styles.saveText}>
+                    {saving ? 'Đang lưu...' : 'Lưu dữ liệu'}
+                  </span>
+                </button>
 
                 {/* Export button */}
                 <button

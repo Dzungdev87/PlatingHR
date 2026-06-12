@@ -154,6 +154,79 @@
   font-size: 12px;
 }
 
+/* ─── Save Button ─────────────────────────────── */
+.saveBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
+  border: 1px solid rgba(33, 150, 243, 0.4);
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.saveBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #2196f3 100%);
+  border-color: rgba(33, 150, 243, 0.7);
+  box-shadow: 0 4px 20px rgba(33, 150, 243, 0.35);
+  transform: translateY(-1px);
+}
+
+.saveBtn.hasChanges {
+  background: linear-gradient(135deg, #e65100 0%, #ef6c00 50%, #f57c00 100%);
+  border-color: rgba(255, 152, 0, 0.4);
+  animation: pulseButton 2s infinite;
+}
+
+.saveBtn.hasChanges:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ef6c00 0%, #f57c00 50%, #fb8c00 100%);
+  border-color: rgba(255, 152, 0, 0.7);
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.45);
+}
+
+@keyframes pulseButton {
+  0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+}
+
+.saveBtn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.saveIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.saveText {
+  font-size: 14px;
+  font-weight: 600;
+}
+
 /* ─── Export Excel Button ─────────────────────── */
 .exportBtn {
   display: flex;
@@ -238,6 +311,6 @@
   .headerRight { width: 100%; justify-content: space-between; }
   .controls { flex-wrap: wrap; }
   .legend { gap: 8px; }
-  .exportBtn { flex: 1; justify-content: center; }
+  .saveBtn, .exportBtn { flex: 1; justify-content: center; }
 }
 

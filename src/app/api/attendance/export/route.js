@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllSheetData } from '@/lib/googleSheets';
+import { getAllSheetData, getOrInitializeAttendanceSheet } from '@/lib/googleSheets';
 import { verifyToken } from '@/lib/auth';
 
 // We use require() for xlsx to avoid ESM/CJS conflict in Next.js
@@ -22,8 +22,9 @@ export async function GET(request) {
     const month = parseInt(searchParams.get('month') || String(new Date().getMonth() + 1));
     const year = parseInt(searchParams.get('year') || String(new Date().getFullYear()));
 
-    // Fetch data from Google Sheets
-    const data = await getAllSheetData('ChamCong');
+    // Fetch data from Google Sheets for the specific month/year
+    const sheetName = await getOrInitializeAttendanceSheet(month, year);
+    const data = await getAllSheetData(sheetName);
     if (!data || data.length === 0) {
       return NextResponse.json({ error: 'Không có dữ liệu' }, { status: 404 });
     }

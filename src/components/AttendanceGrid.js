@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './AttendanceGrid.module.css';
 import ShiftBadge from './ShiftBadge';
 
@@ -35,6 +35,10 @@ export default function AttendanceGrid({
   const [localData, setLocalData] = useState(attendanceData);
   const [selectedCell, setSelectedCell] = useState(null);
   const [customShiftText, setCustomShiftText] = useState('');
+
+  useEffect(() => {
+    setLocalData(attendanceData);
+  }, [attendanceData, month, year]);
 
   const daysInMonth = new Date(year, month, 0).getDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
@@ -105,6 +109,7 @@ export default function AttendanceGrid({
         <table className={styles.grid}>
           <thead>
             <tr>
+              <th className={`${styles.th} ${styles.stickyColIndex} ${styles.colIndex}`}>STT</th>
               <th className={`${styles.th} ${styles.stickyCol} ${styles.colEmpId}`}>Mã NV</th>
               <th className={`${styles.th} ${styles.stickyColName} ${styles.colName}`}>Họ và tên</th>
               {days.map(day => (
@@ -130,6 +135,9 @@ export default function AttendanceGrid({
               const { workDays, leaveDays } = getRowSummary(emp.empId);
               return (
                 <tr key={emp.empId} className={idx % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+                  <td className={`${styles.td} ${styles.stickyColIndex} ${styles.colIndex}`}>
+                    {idx + 1}
+                  </td>
                   <td className={`${styles.td} ${styles.stickyCol} ${styles.colEmpId}`}>
                     {emp.empId}
                   </td>

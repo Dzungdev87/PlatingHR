@@ -9,8 +9,8 @@
 /* ── Scrollable table container ── */
 .gridWrapper {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  max-height: calc(100vh - 280px);
+  overflow: auto;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
@@ -39,6 +39,9 @@
   background: rgba(13, 20, 50, 0.98);
   white-space: nowrap;
   user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 /* Day number header cell */
@@ -78,31 +81,68 @@
 
 /* ════════════════════════════
    STICKY COLUMNS
-════════════════════════════ */
-.stickyCol {
+   z-index structure:
+   - Body: index (4) > empId (3) > name (2) > standard cells (auto)
+   - Header: index th (14) > empId th (13) > name th (12) > standard th (10)
+   ════════════════════════════ */
+.stickyColIndex {
   position: sticky;
   left: 0;
-  z-index: 12;
+  z-index: 4;
   background: rgba(13, 20, 50, 0.98) !important;
   border-right: 1px solid rgba(33, 150, 243, 0.2) !important;
+}
+th.stickyColIndex {
+  z-index: 14;
+}
+
+.stickyCol {
+  position: sticky;
+  left: 40px; /* Width of STT column */
+  z-index: 3;
+  background: rgba(13, 20, 50, 0.98) !important;
+  border-right: 1px solid rgba(33, 150, 243, 0.2) !important;
+}
+th.stickyCol {
+  z-index: 13;
 }
 
 .stickyColName {
   position: sticky;
-  left: 72px; /* empId col width */
-  z-index: 11;
+  left: 112px; /* Width of STT (40px) + Mã NV (72px) */
+  z-index: 2;
   background: rgba(13, 20, 50, 0.98) !important;
   border-right: 2px solid rgba(33, 150, 243, 0.2) !important;
   box-shadow: 4px 0 8px rgba(0, 0, 0, 0.25);
 }
+th.stickyColName {
+  z-index: 12;
+}
 
 /* Override sticky bg for data rows */
+tr:hover .stickyColIndex,
 tr:hover .stickyCol,
 tr:hover .stickyColName {
   background: rgba(20, 32, 72, 0.98) !important;
 }
 
 /* Column widths */
+.colIndex {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 11px;
+  color: #78909c;
+}
+
+.colIndex.td {
+  font-size: 11px;
+  font-weight: 700;
+  color: #78909c;
+  font-family: 'Courier New', monospace;
+}
+
 .colEmpId {
   width: 72px;
   min-width: 72px;
@@ -515,9 +555,12 @@ tr:hover .stickyColName {
    RESPONSIVE
 ════════════════════════════ */
 @media (max-width: 768px) {
-  .colName { width: 130px; min-width: 130px; }
-  .stickyColName { left: 64px; }
+  .colIndex { width: 36px; min-width: 36px; }
+  .stickyColIndex { left: 0; }
   .colEmpId { width: 64px; min-width: 64px; }
+  .stickyCol { left: 36px; }
+  .colName { width: 130px; min-width: 130px; }
+  .stickyColName { left: 100px; }
   .cellEditor { padding: 20px 16px 28px; }
   .shiftOptions { grid-template-columns: repeat(3, 1fr); }
   .leaveOptions { grid-template-columns: 1fr; }

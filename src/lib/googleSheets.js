@@ -182,3 +182,80 @@ export async function findRowByValue(sheetName, columnIndex, value) {
   const data = await getAllSheetData(sheetName);
   return data.findIndex((row) => row[columnIndex] === value);
 }
+
+// Get or initialize month-specific sheet (e.g., ChamCong_06_2026)
+export async function getOrInitializeAttendanceSheet(month, year) {
+  const formattedMonth = String(month).padStart(2, '0');
+  const sheetName = `ChamCong_${formattedMonth}_${year}`;
+  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
+
+  return withRetry(async () => {
+    const sheets = await initializeSheets();
+    try {
+      // Check if sheet exists
+      await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: `${sheetName}!A1:C1`,
+      });
+      return sheetName;
+    } catch (error) {
+      const status = error?.response?.status ?? error?.code;
+      const isNotFoundError = status === 400 || (error.message && error.message.includes('Unable to parse range'));
+      
+      if (!isNotFoundError) {
+        throw error;
+      }
+
+      console.log(`Sheet "${sheetName}" not found. Creating and initializing it...`);
+
+      // Get master employee list
+      const masterResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'ChamCong',
+      });
+      const masterData = masterResponse.data.values || [];
+      const EMP_ID_PATTERN = /^[A-Za-z]+\d+$/;
+      const activeEmployees = masterData
+        .filter((row) => EMP_ID_PATTERN.test((row[1] || '').toString().trim()))
+        .map((row) => ({
+          empId: row[1].toString().trim(),
+          fullName: (row[2] || '').toString().trim(),
+        }));
+
+      // Create new sheet
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          requests: [
+            {
+              addSheet: {
+                properties: {
+                  title: sheetName,
+                },
+              },
+            },
+          ],
+        },
+      });
+
+      // Prepare initial rows
+      const days = Array.from({ length: 31 }, (_, i) => `${i + 1}`);
+      const header = ['No', 'Emp.No.', 'Full Name', ...days, 'Total'];
+      const rows = [header];
+      activeEmployees.forEach((emp, idx) => {
+        rows.push([idx + 1, emp.empId, emp.fullName, ...Array(31).fill('')]);
+      });
+
+      // Write values
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: rows },
+      });
+
+      console.log(`Successfully initialized sheet "${sheetName}" with ${activeEmployees.length} employees.`);
+      return sheetName;
+    }
+  });
+}

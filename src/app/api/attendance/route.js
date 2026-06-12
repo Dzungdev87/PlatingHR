@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllSheetData, updateCell } from '@/lib/googleSheets';
+import { getAllSheetData, updateCell, getOrInitializeAttendanceSheet, appendSheetData, updateRange } from '@/lib/googleSheets';
 import { verifyToken, canEditAttendanceForDate } from '@/lib/auth';
 
 export async function GET(request) {
@@ -23,8 +23,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Tháng và năm là bắt buộc' }, { status: 400 });
     }
 
-    // Get attendance data from ChamCong sheet
-    const data = await getAllSheetData('ChamCong');
+    const parsedMonth = parseInt(month);
+    const parsedYear = parseInt(year);
+
+    // Get or initialize sheet name for the month and year
+    const sheetName = await getOrInitializeAttendanceSheet(parsedMonth, parsedYear);
+    const data = await getAllSheetData(sheetName);
 
     if (!data || data.length === 0) {
       return NextResponse.json({ attendance: [] });
@@ -64,51 +68,114 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Token không hợp lệ' }, { status: 401 });
     }
 
-    const { empId, day, month, year, value } = await request.json();
+    const { month, year, attendanceData } = await request.json();
 
-    if (!empId || !day || !month || !year) {
+    if (!month || !year || !attendanceData) {
       return NextResponse.json({ error: 'Thiếu thông tin bắt buộc' }, { status: 400 });
     }
 
-    // Check if user has permission to edit this date
-    const targetDate = new Date(year, month - 1, day);
-    if (!canEditAttendanceForDate(user.role, targetDate)) {
-      return NextResponse.json(
-        { error: 'Chỉ được chấm công cho hôm nay và hôm qua' },
-        { status: 403 }
-      );
+    const parsedMonth = parseInt(month);
+    const parsedYear = parseInt(year);
+
+    // Get or initialize sheet name for the month and year
+    const sheetName = await getOrInitializeAttendanceSheet(parsedMonth, parsedYear);
+
+    // Get all data currently in the sheet to find rows
+    let data = await getAllSheetData(sheetName);
+    if (!data || data.length === 0) {
+      return NextResponse.json({ error: 'Không có dữ liệu bảng tính' }, { status: 404 });
     }
 
-    // Get all data to find the correct row and column
-    const data = await getAllSheetData('ChamCong');
-    const rowIndex = data.findIndex((row) => row[1] === empId);
+    const EMP_ID_PATTERN = /^[A-Za-z]+\d+$/;
 
-    if (rowIndex === -1) {
-      return NextResponse.json({ error: 'Không tìm thấy nhân viên' }, { status: 404 });
+    // 1. Validation & Security check (only for Leaders)
+    if (user.role === 'leader') {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const empId = (row[1] || '').toString().trim();
+        if (!EMP_ID_PATTERN.test(empId)) continue;
+
+        for (let day = 1; day <= 31; day++) {
+          const key = `${empId}-${day}`;
+          const newValue = (attendanceData[key] || '').trim();
+          const oldValue = (row[3 + (day - 1)] || '').toString().trim();
+
+          if (newValue !== oldValue) {
+            const cellDate = new Date(parsedYear, parsedMonth - 1, day); cellDate.setHours(0,0,0,0);
+            const isAllowed = cellDate.getTime() === today.getTime() || cellDate.getTime() === yesterday.getTime();
+            if (!isAllowed) {
+              return NextResponse.json(
+                { error: `Leader chỉ được chấm công cho hôm nay và hôm qua (Ngày ${day} không hợp lệ)` },
+                { status: 403 }
+              );
+            }
+          }
+        }
+      }
     }
 
-    // Calculate column: D = day 1, E = day 2, ... AG = day 30
-    let col;
-    if (day <= 23) {
-      col = String.fromCharCode(68 + (day - 1)); // D to Z
-    } else {
-      // AA, AB, AC, AD, AE, AF, AG for days 24-30
-      const extraDays = day - 24;
-      col = 'A' + String.fromCharCode(65 + extraDays);
-    }
-    const cellAddress = `${col}${rowIndex + 1}`;
+    // 2. Synchronize newly added employees in master list
+    // Check if any employees in attendanceData are NOT in the monthly sheet
+    const masterData = await getAllSheetData('ChamCong');
+    const masterEmployees = masterData
+      .filter((row) => EMP_ID_PATTERN.test((row[1] || '').toString().trim()))
+      .map((row) => ({
+        empId: row[1].toString().trim(),
+        fullName: (row[2] || '').toString().trim(),
+      }));
 
-    // Update the cell
-    await updateCell('ChamCong', cellAddress, value || '');
+    let sheetUpdated = false;
+    for (const emp of masterEmployees) {
+      const foundInSheet = data.some((row) => (row[1] || '').toString().trim() === emp.empId);
+      if (!foundInSheet) {
+        // Append missing employee to the sheet
+        const nextNo = data.length;
+        const newRow = [nextNo, emp.empId, emp.fullName, ...Array(31).fill('')];
+        await appendSheetData(sheetName, newRow);
+        sheetUpdated = true;
+      }
+    }
+
+    // If we appended new rows, reload sheet data
+    if (sheetUpdated) {
+      data = await getAllSheetData(sheetName);
+    }
+
+    // 3. Construct 2D array of values to update (columns D through AH = days 1 to 31)
+    const updateRows = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const empId = (row[1] || '').toString().trim();
+
+      const dayValues = [];
+      if (EMP_ID_PATTERN.test(empId)) {
+        for (let day = 1; day <= 31; day++) {
+          const key = `${empId}-${day}`;
+          dayValues.push(attendanceData[key] || '');
+        }
+      } else {
+        // If not a valid employee row (e.g. empty or footer), keep existing cell values
+        for (let colIdx = 3; colIdx < 34; colIdx++) {
+          dayValues.push(row[colIdx] || '');
+        }
+      }
+      updateRows.push(dayValues);
+    }
+
+    // 4. Update the entire block of days (D2:AH<last row>)
+    const startCell = 'D2';
+    await updateRange(sheetName, startCell, updateRows);
 
     return NextResponse.json({
-      message: 'Cập nhật chấm công thành công',
-      empId,
-      day,
-      value,
+      message: 'Lưu bảng chấm công thành công',
+      month: parsedMonth,
+      year: parsedYear,
     });
   } catch (error) {
-    console.error('Update attendance error:', error);
+    console.error('Save attendance error:', error);
     return NextResponse.json({ error: 'Lỗi máy chủ nội bộ' }, { status: 500 });
   }
 }
