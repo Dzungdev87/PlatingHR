@@ -1,0 +1,85 @@
+/* Header.module.css */
+.header {
+  position: fixed;
+  top: 0;
+  left: 240px;
+  right: 0;
+  height: 64px;
+  background: rgba(10, 15, 40, 0.95);
+  border-bottom: 1px solid rgba(33, 150, 243, 0.2);
+  z-index: 90;
+  backdrop-filter: blur(10px);
+  transition: left 0.3s;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 24px;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2196F3;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.userSection { position: relative; }
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #e3f2fd;
+  transition: all 0.2s;
+}
+.userButton:hover {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.5);
+}
+
+.avatar { font-size: 1.3rem; }
+.userInfo { text-align: left; }
+.name { font-size: 0.9rem; font-weight: 600; color: #e3f2fd; }
+.role { font-size: 0.75rem; color: #90caf9; }
+.dropdown { font-size: 0.7rem; color: #90caf9; }
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #0d1b3e;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 10px;
+  min-width: 160px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 200;
+}
+.dropdownMenu hr { border-color: rgba(33, 150, 243, 0.2); margin: 0; }
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #90caf9;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.dropdownItem:hover {
+  background: rgba(33, 150, 243, 0.15);
+  color: #fff;
+}

@@ -1,0 +1,479 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #0a0a0a;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 240px;
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 64px;
+}
+
+.container {
+  padding: 24px 30px;
+  max-width: 1400px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: #808080;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: #fff;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 260px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #2196f3;
+  background: rgba(33, 150, 243, 0.12);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Year Selector */
+.yearSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.yearLabel {
+  font-size: 13px;
+  color: #90caf9;
+  white-space: nowrap;
+}
+
+.yearSelect {
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.yearSelect:focus {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.yearSelect option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.addBtn {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.addBtn:hover {
+  background: linear-gradient(135deg, #42a5f5, #2196f3);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #b0b0b0;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendNote {
+  margin-left: auto;
+  font-size: 12px;
+  color: #606060;
+  font-style: italic;
+}
+
+/* Table */
+.tableWrapper {
+  background: rgba(33, 150, 243, 0.04);
+  border: 1px solid rgba(33, 150, 243, 0.12);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #90caf9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(33, 150, 243, 0.08);
+  border-bottom: 1px solid rgba(33, 150, 243, 0.12);
+  white-space: nowrap;
+}
+
+.thLeave {
+  text-align: center;
+}
+
+.td {
+  padding: 13px 16px;
+  font-size: 14px;
+  color: #e0e0e0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.rowEven { background: transparent; }
+.rowOdd { background: rgba(255, 255, 255, 0.02); }
+
+.rowEven:hover,
+.rowOdd:hover {
+  background: rgba(33, 150, 243, 0.06);
+  transition: background 0.15s;
+}
+
+.emptyRow {
+  text-align: center;
+  padding: 40px;
+  color: #606060;
+  font-size: 14px;
+}
+
+.empIdBadge {
+  background: rgba(33, 150, 243, 0.15);
+  color: #90caf9;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.activeBadge {
+  color: #4caf50;
+  font-size: 12px;
+}
+
+/* Delete column */
+.thDelete {
+  text-align: center;
+  width: 52px;
+}
+
+.tdDelete {
+  text-align: center;
+  padding: 8px 12px;
+}
+
+.deleteEmpBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  background: rgba(244, 67, 54, 0.08);
+  color: #ef5350;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-weight: 400;
+}
+
+.deleteEmpBtn:hover {
+  background: rgba(244, 67, 54, 0.22);
+  border-color: rgba(244, 67, 54, 0.6);
+  color: #ff1744;
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* Join Date cell */
+.joinDateCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.joinDateText {
+  font-size: 13px;
+  color: #b0bec5;
+}
+
+.joinDateEmpty {
+  font-size: 13px;
+  color: #424242;
+  font-style: italic;
+}
+
+.editDateBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.editDateBtn:hover {
+  opacity: 1;
+  background: rgba(33, 150, 243, 0.15);
+  transform: scale(1.1);
+}
+
+/* Leave Badges */
+.leaveBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.leaveBadgeAL {
+  background: rgba(0, 188, 212, 0.15);
+  color: #00BCD4;
+  border: 1px solid rgba(0, 188, 212, 0.3);
+}
+
+.leaveBadgeUP {
+  background: rgba(96, 125, 139, 0.15);
+  color: #90A4AE;
+  border: 1px solid rgba(96, 125, 139, 0.3);
+}
+
+.leaveBadgeSL {
+  background: rgba(244, 67, 54, 0.15);
+  color: #EF5350;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* Ensure center alignment for leave columns */
+.td:nth-child(5),
+.td:nth-child(6),
+.td:nth-child(7) {
+  text-align: center;
+}
+
+/* Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background: #0d1b3e;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.modalSubtitle {
+  font-size: 14px;
+  color: #808080;
+  margin-bottom: 20px;
+}
+
+.empHighlight {
+  color: #90caf9;
+  font-family: monospace;
+}
+
+.formGroup {
+  margin-bottom: 18px;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 13px;
+  color: #90caf9;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Date input calendar icon color */
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.5);
+  cursor: pointer;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #b0b0b0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #42a5f5, #2196f3);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .content { margin-left: 60px; }
+  .container { padding: 16px; }
+  .searchInput { width: 100%; }
+  .actions { width: 100%; flex-direction: column; align-items: stretch; }
+  .legend { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .legendNote { margin-left: 0; }
+}

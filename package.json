@@ -1,0 +1,29 @@
+{
+  "name": "plating-hr-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "node setup-dirs.js && node full-organize.js",
+    "organize": "node organize-project.js",
+    "verify": "node verify-project.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "caniuse-lite": "^1.0.30001797",
+    "cookie": "^1.0.2",
+    "googleapis": "^144.0.0",
+    "jose": "^5.9.6",
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6"
+  }
+}

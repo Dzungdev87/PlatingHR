@@ -1,0 +1,109 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies - all levels
+node_modules/
+**/node_modules/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+**/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (never commit secrets)
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Excel files (data)
+.FileExcel/
+
+# Redundant scaffolding scripts (already executed)
+create-phase*.js
+setup-*.js
+full-organize.js
+organize-project.js
+verify-project.js
+create-dirs*
+create_dirs*
+create_directories.js
+setup-main.js
+setup-all*.js
+
+# Old placeholder/draft files in src/app root
+src/app/API_*.js
+src/app/AdminPage.js
+src/app/AdminPage.module.css
+src/app/AttendanceGrid.js
+src/app/AttendanceGrid.module.css
+src/app/AttendancePage.js
+src/app/AttendancePage.module.css
+src/app/DashboardPage.js
+src/app/DashboardPage.module.css
+src/app/EmployeeCard.js
+src/app/EmployeeCard.module.css
+src/app/EmployeesPage.js
+src/app/EmployeesPage.module.css
+src/app/Header.js
+src/app/Header.module.css
+src/app/LoginPage.js
+src/app/LoginPage.module.css
+src/app/Modal.js
+src/app/Modal.module.css
+src/app/ShiftBadge.js
+src/app/ShiftBadge.module.css
+src/app/Sidebar.js
+src/app/Sidebar.module.css
+src/app/StatsCard.js
+src/app/StatsCard.module.css
+src/app/auth.js
+src/app/googleSheets.js
+src/app/constants.js
+
+# Redundant documentation
+BUILD_COMPLETE.md
+BUILD_SUMMARY.md
+COMPLETION_REPORT.md
+DELIVERY_COMPLETE.txt
+DOCUMENTATION_CATALOG.md
+DOCUMENTATION_GUIDE.md
+FILE_INVENTORY.md
+FINAL_STATUS.md
+FINAL_SUMMARY.md
+INDEX.md
+MANIFEST.md
+MASTER_INDEX.md
+QUICK_START.md
+SETUP_INSTRUCTIONS.md
+START_HERE.md

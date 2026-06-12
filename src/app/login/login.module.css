@@ -1,0 +1,189 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f3460 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 20% 50%, rgba(33, 150, 243, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(3, 169, 244, 0.08) 0%, transparent 50%);
+  animation: bgShift 20s infinite ease-in-out;
+}
+
+@keyframes bgShift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-50px, -50px);
+  }
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: slideUp 0.5s ease;
+}
+
+.logo {
+  font-size: 60px;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: slideUp 0.5s ease 0.1s both;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 8px 0;
+  animation: slideUp 0.5s ease 0.2s both;
+}
+
+.subtitle {
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 14px;
+  margin-bottom: 30px;
+  animation: slideUp 0.5s ease 0.3s both;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideUp 0.5s ease 0.4s both;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2196f3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.formGroup input {
+  padding: 12px 15px;
+  border-radius: 8px;
+  background: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.6);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+}
+
+.formGroup input::placeholder {
+  color: rgba(176, 176, 176, 0.5);
+}
+
+.error {
+  padding: 12px 15px;
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.4);
+  color: #ff6b6b;
+  border-radius: 8px;
+  font-size: 13px;
+  animation: slideUp 0.3s ease;
+}
+
+.submitBtn {
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.4);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(33, 150, 243, 0.2);
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 12px;
+}
+
+.footer p {
+  margin: 0 0 8px 0;
+}
+
+.hint {
+  color: #2196f3;
+  font-family: monospace;
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .card {
+    margin: 20px;
+    padding: 30px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .logo {
+    font-size: 50px;
+  }
+
+  .submitBtn {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+}
