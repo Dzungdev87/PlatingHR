@@ -32,7 +32,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const year = searchParams.get('year') || new Date().getFullYear().toString();
 
-    // 1. Get employees from ChamCong sheet
+    // 1. Get employees from ChamCong master sheet (employee list only)
     const chamCongData = await getAllSheetData('ChamCong');
     if (!chamCongData || chamCongData.length === 0) {
       return NextResponse.json({ employees: [] });
@@ -61,27 +61,31 @@ export async function GET(request) {
       }
     }
 
-    // 3. Aggregate AL/UP/SL across all months in the requested year
-    //    We attempt to read sheets named by month: ChamCong (current), or month-specific sheets
-    //    Strategy: read ChamCong for current month data already in memory,
-    //    then try to read sheets "1", "2", ... "12" or "Thang1" etc.
-    //    But most likely all months are in the SAME ChamCong sheet (multi-month rows).
-    //    We scan ALL rows in ChamCong for all employees and count leave codes.
-
-    // Build leave totals from ALL data rows in ChamCong (entire sheet = entire year)
+    // 3. Aggregate AL/UP/SL across ALL 12 monthly sheets for the requested year.
+    //    Sheet naming convention: ChamCong_MM_YYYY (e.g. ChamCong_06_2026)
+    //    Read all months in parallel; ignore sheets that don't exist yet.
     const leaveMap = {}; // empId → { AL, UP, SL }
-    for (const row of chamCongData) {
-      const empId = (row[1] || '').toString().trim();
-      if (!EMP_ID_PATTERN.test(empId)) continue;
-      if (!leaveMap[empId]) leaveMap[empId] = { AL: 0, UP: 0, SL: 0 };
-      const days = row.slice(3, 34); // columns D..AH
-      leaveMap[empId].AL += countLeave(days, 'AL');
-      leaveMap[empId].UP += countLeave(days, 'UP');
-      leaveMap[empId].SL += countLeave(days, 'SL');
-    }
 
-    // NOTE: Leave totals are aggregated from ChamCong sheet only (single source of truth).
-    // All months of data are expected to be in the same ChamCong sheet as separate rows.
+    const monthPromises = Array.from({ length: 12 }, (_, i) => {
+      const mm = String(i + 1).padStart(2, '0');
+      const sheetName = `ChamCong_${mm}_${year}`;
+      return getAllSheetData(sheetName).catch(() => null); // null if sheet doesn't exist
+    });
+
+    const monthlyResults = await Promise.all(monthPromises);
+
+    for (const monthData of monthlyResults) {
+      if (!monthData || monthData.length === 0) continue;
+      for (const row of monthData) {
+        const empId = (row[1] || '').toString().trim();
+        if (!EMP_ID_PATTERN.test(empId)) continue;
+        if (!leaveMap[empId]) leaveMap[empId] = { AL: 0, UP: 0, SL: 0 };
+        const days = row.slice(3, 34); // columns D..AH (up to 31 days)
+        leaveMap[empId].AL += countLeave(days, 'AL');
+        leaveMap[empId].UP += countLeave(days, 'UP');
+        leaveMap[empId].SL += countLeave(days, 'SL');
+      }
+    }
 
     const employees = dataRows.map((row) => {
       const empId = row[1].toString().trim();
@@ -97,16 +101,13 @@ export async function GET(request) {
       };
     });
 
-    // Deduplicate: if multiple rows in ChamCong have same empId (multi-month),
-    // keep first occurrence but sum leaves
+    // Deduplicate by empId (keep first occurrence)
     const seen = new Map();
     const uniqueEmployees = [];
     for (const emp of employees) {
       if (!seen.has(emp.empId)) {
         seen.set(emp.empId, emp);
         uniqueEmployees.push(emp);
-      } else {
-        // Already counted in leaveMap (single map), so just skip duplicates
       }
     }
 
