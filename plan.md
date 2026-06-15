@@ -5,6 +5,7 @@
 Xây dựng web app quản lý nhân sự và chấm công cho bộ phận Plating, sử dụng **Google Sheets** làm database và **Next.js (Node.js)** làm frontend/backend. Hệ thống hỗ trợ phân quyền Leader/Admin.
 
 > [!IMPORTANT]
+> **Github** git@github.com:Dzungdev87/PlatingHR.git
 > **Google Sheet gốc**: [CHAM CONG PLATING](https://docs.google.com/spreadsheets/d/1jfptNRiZH_pWYI1nhYiubl-3xzLAwM_ew0GwyDlao_o/edit?usp=sharing)
 
 ---

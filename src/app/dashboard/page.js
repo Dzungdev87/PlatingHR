@@ -11,11 +11,18 @@ export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [attendanceData, setAttendanceData] = useState([]);
+  const [yesterdayAttendanceData, setYesterdayAttendanceData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const today = new Date();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
+
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const yesterdayDay = yesterday.getDate();
+  const yesterdayMonth = yesterday.getMonth() + 1;
+  const yesterdayYear = yesterday.getFullYear();
 
   const fetchUser = useCallback(async () => {
     try {
@@ -32,9 +39,9 @@ export default function DashboardPage() {
     }
   }, [router]);
 
-  const fetchAttendance = useCallback(async () => {
+  const fetchAttendance = useCallback(async (m, y) => {
     try {
-      const res = await fetch(`/api/attendance?month=${month}&year=${year}`);
+      const res = await fetch(`/api/attendance?month=${m}&year=${y}`);
       if (res.ok) {
         const data = await res.json();
         return data.attendance || [];
@@ -43,19 +50,26 @@ export default function DashboardPage() {
       return [];
     }
     return [];
-  }, [month, year]);
+  }, []);
 
   useEffect(() => {
     const init = async () => {
       const userData = await fetchUser();
       if (!userData) return;
       setUser(userData);
-      const att = await fetchAttendance();
+      const att = await fetchAttendance(month, year);
       setAttendanceData(att);
+      
+      if (yesterdayMonth !== month || yesterdayYear !== year) {
+        const yatt = await fetchAttendance(yesterdayMonth, yesterdayYear);
+        setYesterdayAttendanceData(yatt);
+      } else {
+        setYesterdayAttendanceData(att);
+      }
       setLoading(false);
     };
     init();
-  }, [fetchUser, fetchAttendance]);
+  }, [fetchUser, fetchAttendance, month, year, yesterdayMonth, yesterdayYear]);
 
   const todayStr = today.getDate();
   const stats = {
@@ -148,9 +162,9 @@ export default function DashboardPage() {
 
             <div className={styles.bottomGrid}>
               <div className={styles.shiftSummary}>
-                <h2 className={styles.sectionTitle}>🕐 Phân bố ca làm việc hôm nay</h2>
+                <h2 className={styles.sectionTitle}>🕐 Phân bố ca làm việc hôm qua</h2>
                 {['C1', 'C2', 'C3', 'TS', 'X', 'V'].map(shift => {
-                  const count = attendanceData.filter(e => e.days?.[todayStr - 1] === shift).length;
+                  const count = yesterdayAttendanceData.filter(e => e.days?.[yesterdayDay - 1] === shift).length;
                   const colors = { C1: '#4CAF50', C2: '#2196F3', C3: '#9C27B0', TS: '#FF5722', X: '#FF9800', V: '#00897B' };
                   return (
                     <div key={shift} className={styles.shiftRow}>
@@ -158,7 +172,7 @@ export default function DashboardPage() {
                       <div className={styles.shiftBar}>
                         <div
                           className={styles.shiftFill}
-                          style={{ width: `${stats.totalEmployees > 0 ? (count / stats.totalEmployees) * 100 : 0}%`, background: colors[shift] }}
+                          style={{ width: `${yesterdayAttendanceData.length > 0 ? (count / yesterdayAttendanceData.length) * 100 : 0}%`, background: colors[shift] }}
                         />
                       </div>
                       <span className={styles.shiftCount}>{count} người</span>
@@ -168,8 +182,8 @@ export default function DashboardPage() {
                 {(() => {
                   const standardShifts = ['C1', 'C2', 'C3', 'TS', 'X', 'V'];
                   const leaveTypes = ['AL', 'UP', 'SL', 'WL', 'OL'];
-                  const customCount = attendanceData.filter(e => {
-                    const val = e.days?.[todayStr - 1];
+                  const customCount = yesterdayAttendanceData.filter(e => {
+                    const val = e.days?.[yesterdayDay - 1];
                     return val && !standardShifts.includes(val) && !leaveTypes.includes(val);
                   }).length;
                   
@@ -181,7 +195,7 @@ export default function DashboardPage() {
                       <div className={styles.shiftBar}>
                         <div
                           className={styles.shiftFill}
-                          style={{ width: `${stats.totalEmployees > 0 ? (customCount / stats.totalEmployees) * 100 : 0}%`, background: '#3f51b5' }}
+                          style={{ width: `${yesterdayAttendanceData.length > 0 ? (customCount / yesterdayAttendanceData.length) * 100 : 0}%`, background: '#3f51b5' }}
                         />
                       </div>
                       <span className={styles.shiftCount}>{customCount} người</span>
