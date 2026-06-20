@@ -141,6 +141,15 @@
   font-weight: 600;
 }
 
+.userBadge {
+  background: rgba(158, 158, 158, 0.12);
+  color: #9e9e9e;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .activeBadge { color: #4caf50; font-size: 12px; }
 .inactiveBadge { color: #f44336; font-size: 12px; }
 

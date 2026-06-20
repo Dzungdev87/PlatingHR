@@ -127,8 +127,9 @@ export async function PUT(request) {
       );
     }
 
+    const targetEmpId = empId.toString().trim().toUpperCase();
     const usersData = await getAllSheetData('Users');
-    const rowIndex = usersData.findIndex((row) => row[0] === empId);
+    const rowIndex = usersData.findIndex((row) => (row[0] || '').toString().trim().toUpperCase() === targetEmpId);
 
     if (rowIndex === -1) {
       return NextResponse.json(
@@ -193,8 +194,9 @@ export async function DELETE(request) {
       );
     }
 
+    const targetEmpId = empId.toString().trim().toUpperCase();
     const usersData = await getAllSheetData('Users');
-    const rowIndex = usersData.findIndex((row) => row[0] === empId);
+    const rowIndex = usersData.findIndex((row) => (row[0] || '').toString().trim().toUpperCase() === targetEmpId);
 
     if (rowIndex === -1) {
       return NextResponse.json(

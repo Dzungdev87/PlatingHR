@@ -98,9 +98,10 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Mã NV là bắt buộc' }, { status: 400 });
     }
 
+    const targetEmpId = empId.toString().trim().toUpperCase();
     const usersData = await getAllSheetData('Users');
     const dataRows = usersData[0][0] === 'empId' ? usersData.slice(1) : usersData;
-    const rowIndex = dataRows.findIndex((row) => row[0] === empId);
+    const rowIndex = dataRows.findIndex((row) => (row[0] || '').toString().trim().toUpperCase() === targetEmpId);
 
     if (rowIndex === -1) {
       return NextResponse.json({ error: 'Không tìm thấy người dùng' }, { status: 404 });
@@ -148,9 +149,10 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Mã NV là bắt buộc' }, { status: 400 });
     }
 
+    const targetEmpId = empId.toString().trim().toUpperCase();
     const usersData = await getAllSheetData('Users');
     const dataRows = usersData[0][0] === 'empId' ? usersData.slice(1) : usersData;
-    const rowIndex = dataRows.findIndex((row) => row[0] === empId);
+    const rowIndex = dataRows.findIndex((row) => (row[0] || '').toString().trim().toUpperCase() === targetEmpId);
 
     if (rowIndex === -1) {
       return NextResponse.json({ error: 'Không tìm thấy người dùng' }, { status: 404 });

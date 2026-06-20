@@ -67,7 +67,7 @@ export async function POST(request) {
       );
     }
 
-    const { empId, fullName } = await request.json();
+    const { empId, fullName, joinDate } = await request.json();
 
     if (!empId || !fullName) {
       return NextResponse.json(
@@ -76,13 +76,22 @@ export async function POST(request) {
       );
     }
 
+    const existingData = await getAllSheetData('ChamCong');
+    const nextNo = existingData ? existingData.length : 1;
+
     // Add new employee to ChamCong sheet
-    const newRow = [data.length, empId, fullName, ...Array(30).fill('')];
+    const newRow = [nextNo, empId, fullName, ...Array(30).fill('')];
     await appendSheetData('ChamCong', newRow);
+
+    // If joinDate is provided, also add to Users sheet with role 'user'
+    if (joinDate) {
+      const newUserRow = [empId, fullName, '', 'user', '', '', '', '', 'Plating', '', joinDate, 'active'];
+      await appendSheetData('Users', newUserRow);
+    }
 
     return NextResponse.json({
       message: 'Employee added successfully',
-      employee: { empId, fullName },
+      employee: { empId, fullName, joinDate },
     });
   } catch (error) {
     console.error('Add employee error:', error);

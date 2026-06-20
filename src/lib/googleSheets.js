@@ -140,9 +140,8 @@ export async function deleteSheetRow(sheetName, rowIndex) {
       spreadsheetId,
       requestBody: {
         requests: [{
-          deleteRange: {
+          deleteDimension: {
             range: { sheetId, dimension: 'ROWS', startIndex: rowIndex - 1, endIndex: rowIndex },
-            shiftDimension: 'ROWS',
           },
         }],
       },

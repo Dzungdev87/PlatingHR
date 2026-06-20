@@ -14,7 +14,7 @@ export default function EmployeesPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newEmp, setNewEmp] = useState({ empId: '', fullName: '' });
+  const [newEmp, setNewEmp] = useState({ empId: '', fullName: '', joinDate: '' });
   const [saving, setSaving] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -94,7 +94,7 @@ export default function EmployeesPage() {
         setEmployees(emps);
         setFiltered(emps);
         setShowAddModal(false);
-        setNewEmp({ empId: '', fullName: '' });
+        setNewEmp({ empId: '', fullName: '', joinDate: '' });
         alert('Thêm nhân viên thành công!');
       } else {
         const err = await res.json();
@@ -347,6 +347,16 @@ export default function EmployeesPage() {
                 onChange={e => setNewEmp(p => ({ ...p, fullName: e.target.value }))}
                 className={styles.input}
                 id="new-emp-name"
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Ngày vào làm</label>
+              <input
+                type="date"
+                value={newEmp.joinDate}
+                onChange={e => setNewEmp(p => ({ ...p, joinDate: e.target.value }))}
+                className={styles.input}
+                id="new-emp-joindate"
               />
             </div>
             <div className={styles.modalActions}>

@@ -128,7 +128,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Yêu cầu quyền Admin' }, { status: 403 });
     }
 
-    const { empId, fullName } = await request.json();
+    const { empId, fullName, joinDate } = await request.json();
     if (!empId || !fullName) {
       return NextResponse.json({ error: 'Mã NV và tên là bắt buộc' }, { status: 400 });
     }
@@ -139,9 +139,15 @@ export async function POST(request) {
     const newRow = [nextNo, empId, fullName, ...Array(30).fill('')];
     await appendSheetData('ChamCong', newRow);
 
+    // If joinDate is provided, also add to Users sheet with role 'user'
+    if (joinDate) {
+      const newUserRow = [empId, fullName, '', 'user', '', '', '', '', 'Plating', '', joinDate, 'active'];
+      await appendSheetData('Users', newUserRow);
+    }
+
     return NextResponse.json({
       message: 'Thêm nhân viên thành công',
-      employee: { empId, fullName },
+      employee: { empId, fullName, joinDate },
     });
   } catch (error) {
     console.error('Add employee error:', error);
@@ -163,12 +169,14 @@ export async function PATCH(request) {
     const { empId, joinDate } = await request.json();
     if (!empId) return NextResponse.json({ error: 'Thiếu mã NV' }, { status: 400 });
 
+    const targetEmpId = empId.toString().trim().toUpperCase();
+
     // Find the employee row in Users sheet
     const usersData = await getAllSheetData('Users');
     const EMP_ID_PATTERN = /^[A-Za-z]+\d+$/;
 
     const rowIndex = usersData.findIndex(
-      (row) => (row[0] || '').toString().trim() === empId
+      (row) => (row[0] || '').toString().trim().toUpperCase() === targetEmpId
     );
 
     if (rowIndex === -1) {
@@ -177,12 +185,12 @@ export async function PATCH(request) {
       const chamCongData = await getAllSheetData('ChamCong');
       const empRow = chamCongData.find(
         (row) => EMP_ID_PATTERN.test((row[1] || '').toString().trim()) &&
-          row[1].toString().trim() === empId
+          row[1].toString().trim().toUpperCase() === targetEmpId
       );
       const fullName = empRow ? (empRow[2] || '').toString().trim() : '';
 
-      // Append new row: [empId, fullName, '', 'leader', '', '', '', '', '', '', joinDate, 'active']
-      const newUserRow = [empId, fullName, '', 'leader', '', '', '', '', '', '', joinDate || '', 'active'];
+      // Append new row: [empId, fullName, '', 'user', '', '', '', '', '', '', joinDate, 'active']
+      const newUserRow = [targetEmpId, fullName, '', 'user', '', '', '', '', '', '', joinDate || '', 'active'];
       await appendSheetData('Users', newUserRow);
     } else {
       // Update column K (index 10) of the existing row

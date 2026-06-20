@@ -158,8 +158,12 @@ export default function AdminPage() {
                         </td>
                         <td className={styles.td}>{u.fullName}</td>
                         <td className={styles.td}>
-                          <span className={u.role === 'admin' ? styles.adminBadge : styles.leaderBadge}>
-                            {u.role === 'admin' ? '👑 Admin' : '👤 Leader'}
+                          <span className={
+                            u.role === 'admin' ? styles.adminBadge :
+                            u.role === 'leader' ? styles.leaderBadge :
+                            styles.userBadge
+                          }>
+                            {u.role === 'admin' ? '👑 Admin' : u.role === 'leader' ? '👤 Leader' : '👥 Nhân viên'}
                           </span>
                         </td>
                         <td className={styles.td}>{u.shift || '—'}</td>
